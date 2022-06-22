@@ -21,10 +21,11 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
     private let textDelegate = TextDelegate()
     
     private let memeTextAttributes : [NSAttributedString.Key:Any] = [
-        NSAttributedString.Key.strokeColor: UIColor.red,
-        NSAttributedString.Key.foregroundColor :UIColor.green,
+        NSAttributedString.Key.backgroundColor: UIColor.clear,
+        NSAttributedString.Key.strokeColor: UIColor.black,
+        NSAttributedString.Key.foregroundColor :UIColor.white,
         NSAttributedString.Key.font : UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-        NSAttributedString.Key.strokeWidth : 4]
+        NSAttributedString.Key.strokeWidth : -2]
     
 
     
