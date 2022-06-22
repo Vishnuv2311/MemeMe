@@ -117,6 +117,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
     
     func subscribeToKeyboardNotifications(){
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow(_:)), name: UIResponder.keyboardWillShowNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
     
     func unsubscribeFromKeyboardNotifications(){
@@ -124,7 +125,16 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
     }
     
     @objc func keyboardWillShow(_ nofification:Notification){
-        view.frame.origin.y -= getKeyboardHeight(nofification)
+        if bottomMemeText.isFirstResponder{
+            view.frame.origin.y -= getKeyboardHeight(nofification)
+        }
+        
+    }
+    
+    @objc func keyboardWillHide(_ notification:Notification){
+        if bottomMemeText.isFirstResponder{
+            view.frame.origin.y = CGFloat(0)
+        }
     }
     
     func getKeyboardHeight(_ notification:Notification) -> CGFloat{
