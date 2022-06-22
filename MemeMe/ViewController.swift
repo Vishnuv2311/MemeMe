@@ -109,6 +109,10 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
     let shareController = UIActivityViewController(activityItems: imageItem, applicationActivities: nil)
         
         present(shareController, animated: true, completion: nil)
+        
+        shareController.completionWithItemsHandler = {_,complete,_,_ in
+            self.save()
+        }
     }
     
     func subscribeToKeyboardNotifications(){
