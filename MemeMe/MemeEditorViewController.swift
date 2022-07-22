@@ -7,7 +7,7 @@
 
 import UIKit
 
-class ViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate{
+class MemeEditorViewController: UIViewController,UIImagePickerControllerDelegate, UINavigationControllerDelegate{
     
     @IBOutlet weak var imagePickerView: UIImageView!
     @IBOutlet weak var camerButton: UIBarButtonItem!
@@ -25,7 +25,7 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
         NSAttributedString.Key.strokeColor: UIColor.black,
         NSAttributedString.Key.foregroundColor :UIColor.white,
         NSAttributedString.Key.font : UIFont(name: "HelveticaNeue-CondensedBlack", size: 40)!,
-        NSAttributedString.Key.strokeWidth : -2]
+        NSAttributedString.Key.strokeWidth : -3.5]
     
 
     
@@ -33,13 +33,12 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
         super.viewDidLoad()
         // Do any additional setup after loading the view.
         camerButton.isEnabled = UIImagePickerController.isSourceTypeAvailable(.camera)
-        topMemeText.delegate = textDelegate
-        bottomMemeText.delegate = textDelegate
         
-        topMemeText.defaultTextAttributes = memeTextAttributes
-        bottomMemeText.defaultTextAttributes = memeTextAttributes
-        
+        prepareTextField(textField: topMemeText, defaultText: "TOP")
+        prepareTextField(textField: bottomMemeText, defaultText: "BOTTOM")
         shareButton.isEnabled = false
+        
+    
         
     }
     
@@ -92,17 +91,12 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
     }
     
     @IBAction func pickAnImage(_ sender: UIBarButtonItem) {
-        let pickerController = UIImagePickerController()
-        pickerController.delegate = self
-        pickerController.sourceType = .photoLibrary
-        present(pickerController, animated: true, completion: nil)
+        pickImage(sourceType: .photoLibrary)
     }
     @IBAction func pickFromCamera(_ sender: UIBarButtonItem) {
-        let pickerController = UIImagePickerController()
-        pickerController.delegate = self
-        pickerController.sourceType = .camera
-        present(pickerController, animated: true, completion: nil)
+        pickImage(sourceType: .camera)
     }
+    
     
     @IBAction func shareMeme(_ sender: UIBarButtonItem) {
         let imageItem :[AnyObject] = [generateMemedImage() as AnyObject]
@@ -111,8 +105,17 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
         present(shareController, animated: true, completion: nil)
         
         shareController.completionWithItemsHandler = {_,complete,_,_ in
-            self.save()
+            if complete{
+                self.save()
+            }
         }
+    }
+    
+    func pickImage(sourceType: UIImagePickerController.SourceType){
+        let pickerController = UIImagePickerController()
+        pickerController.delegate = self
+        pickerController.sourceType = sourceType
+        present(pickerController, animated: true, completion: nil)
     }
     
     func subscribeToKeyboardNotifications(){
@@ -126,21 +129,25 @@ class ViewController: UIViewController,UIImagePickerControllerDelegate, UINaviga
     
     @objc func keyboardWillShow(_ nofification:Notification){
         if bottomMemeText.isFirstResponder{
-            view.frame.origin.y -= getKeyboardHeight(nofification)
+            view.frame.origin.y = -getKeyboardHeight(nofification)
         }
         
     }
     
     @objc func keyboardWillHide(_ notification:Notification){
-        if bottomMemeText.isFirstResponder{
             view.frame.origin.y = CGFloat(0)
-        }
     }
     
     func getKeyboardHeight(_ notification:Notification) -> CGFloat{
         let userInfo  = notification.userInfo
         let keyboardSize = userInfo![UIResponder.keyboardFrameEndUserInfoKey] as! NSValue
         return keyboardSize.cgRectValue.height
+    }
+    
+    func prepareTextField(textField:UITextField,defaultText:String){
+        textField.defaultTextAttributes = memeTextAttributes
+        textField.placeholder = defaultText
+        textField.delegate = textDelegate
     }
     
     
